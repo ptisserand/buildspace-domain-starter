@@ -6,9 +6,14 @@ import twitterLogo from './assets/twitter-logo.svg';
 const TWITTER_HANDLE = 'ptisserand';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
+const tld = ".foobar";
+const CONTRACT_ADDRESS = "0xb92c74AB0d6b38df90015902d05dbe828B937147";
+
 const App = () => {
 
-	const [currentAccount, setCurrentAccount ] = useState('');
+	const [currentAccount, setCurrentAccount] = useState('');
+	const [domain, setDomain] = useState('');
+	const [record, setRecord] = useState('');
 
 	const checkIfWalletIsConnected = async () => {
 		const { ethereum } = window;
@@ -20,7 +25,7 @@ const App = () => {
 		}
 
 		// check if we have access to wallete
-		const accounts = await ethereum.request({method: 'eth_accounts'});
+		const accounts = await ethereum.request({ method: 'eth_accounts' });
 		if (accounts.length !== 0) {
 			// if there is multiple account grabd the first one
 			const account = accounts[0];
@@ -31,6 +36,10 @@ const App = () => {
 		}
 	}
 
+	const mint = async () => {
+		// Don't run if domain is empty
+		
+	}
 	const connectWallet = async () => {
 		try {
 			const { ethereum } = window;
@@ -38,7 +47,7 @@ const App = () => {
 				alert("Metamask is required: https://metamask.io");
 				return;
 			}
-			const accounts = await ethereum.request({method: 'eth_requestAccounts'});
+			const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
 			console.log("Connected:", accounts[0]);
 			setCurrentAccount(accounts[0]);
 		} catch (error) {
@@ -55,6 +64,33 @@ const App = () => {
 		</div>
 	);
 
+	const renderInputForm = () => {
+		return (
+			<div className='form-container'>
+				<div className='first-row'>
+					<input type="text"
+						value={domain}
+						placeholder='domain'
+						onChange={e => setDomain(e.target.value)} />
+					<p className='tld'> {tld} </p>
+				</div>
+
+				<input type="text"
+					value={record}
+					placeholder='wazzup'
+					onChange={e => setRecord(e.target.value)} />
+
+				<div className='button-container'>
+					<button className='cta-button mint-button' disabled={null} onClick={null}>
+						Mint
+					</button>
+					<button className='cta-button mint-button' disabled={null} onClick={null}>
+						Set data
+					</button>
+				</div>
+			</div>
+		)
+	};
 	useEffect(() => {
 		checkIfWalletIsConnected();
 	}, []);
@@ -73,6 +109,7 @@ const App = () => {
 				</div>
 
 				{!currentAccount && renderNotConnectedWallet()}
+				{currentAccount && renderInputForm()}
 				<div className="footer-container">
 					<img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
 					<a
