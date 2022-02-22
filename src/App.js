@@ -109,6 +109,45 @@ const App = () => {
 			console.log(error);
 		}
 	}
+
+	const switchNetwork = async () => {
+		if (window.ethereum) {
+			try {
+				await window.ethereum.request({
+					method: 'wallet_switchEthereumChain',
+					params: [{ chainId: '0x13881' }],
+				});
+			} catch (error) {
+				if (error.code === 4092) {
+					// thhis error code means that chain has not been added to metamask
+					try {
+						await window.ethereum.request({
+							method: 'wallet_addEthereumChain',
+							params: [
+								{
+									chainId: '0x13881',
+									chainName: 'Polygon Mumbai Testnet',
+									rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+									nativeCurrency: {
+										name: "Mumbai Matic",
+										symbol: "MATIC",
+										decimals: 18
+									},
+									blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
+								}
+							]
+						})
+					} catch (error) {
+						console.log(error);
+					}
+				}
+				console.log(error);
+			}
+		} else {
+			alert('MetaMask is not installed. Please install it to use this app: https://metamask.io/download.html');
+		}
+	}
+
 	// function to render if wallet is not connected
 	const renderNotConnectedWallet = () => (
 		<div className='connect-wallet-container'>
@@ -124,7 +163,8 @@ const App = () => {
 		if (network !== 'Polygon Mumbai Testnet') {
 			return (
 				<div className="connect-wallet-container">
-					<p>Please connect to the Polygon Mumbai Testnet</p>
+					<p>Please switch to the Polygon Mumbai Testnet</p>
+					<button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch</button>
 				</div>
 			);
 		}
@@ -171,7 +211,7 @@ const App = () => {
 							<p className="title">🦇 Robin Name Service</p>
 							<p className="subtitle">Highlander API on the blockchain!</p>
 						</div>
-						<div className='right'>
+						<div className='right ethereum-address'>
 							<img alt="Network logo" className="logo" src={network.includes("Polygon") ? polygonLogo : ethLogo} />
 							{currentAccount ? <p> Wallet: {currentAccount.slice(0, 6)}...{currentAccount.slice(-4)} </p> : <p> Not connected </p>}
 						</div>
