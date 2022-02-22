@@ -3,6 +3,10 @@ import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 import { ethers } from 'ethers';
 import contractABI from './utils/contractABI.json';
+// At the very top of the file, after the other imports
+import polygonLogo from './assets/polygonlogo.png';
+import ethLogo from './assets/ethlogo.png';
+import { networks } from './utils/networks';
 
 
 // Constants
@@ -17,6 +21,7 @@ const App = () => {
 	const [currentAccount, setCurrentAccount] = useState('');
 	const [domain, setDomain] = useState('');
 	const [record, setRecord] = useState('');
+	const [network, setNetwork] = useState('');
 
 	const checkIfWalletIsConnected = async () => {
 		const { ethereum } = window;
@@ -37,6 +42,19 @@ const App = () => {
 		} else {
 			console.log("No authorized account found");
 		}
+		// retrieve network informations
+		const chainId = await ethereum.request({ method: 'eth_chainId' });
+		setNetwork(networks[chainId]);
+
+		// react on network change
+		ethereum.on('chainChanged', handleChainChanged);
+
+		// reload page when network change
+
+		function handleChainChanged(_chainId) {
+			window.location.reload();
+		}
+
 	}
 
 	const mintDomain = async () => {
@@ -102,6 +120,15 @@ const App = () => {
 	);
 
 	const renderInputForm = () => {
+		// If not on Polygon Mumbai Testnet, render "Please connect to Polygon Mumbai Testnet"
+		if (network !== 'Polygon Mumbai Testnet') {
+			return (
+				<div className="connect-wallet-container">
+					<p>Please connect to the Polygon Mumbai Testnet</p>
+				</div>
+			);
+		}
+
 		return (
 			<div className='form-container'>
 				<div className='first-row'>
@@ -121,7 +148,7 @@ const App = () => {
 					<button className='cta-button mint-button' disabled={null} onClick={mintDomain}>
 						Mint
 					</button>
-			{/*
+					{/*
 					<button className='cta-button mint-button' disabled={null} onClick={null}>
 						Set data
 					</button>
@@ -144,6 +171,10 @@ const App = () => {
 							<p className="title">🦇 Robin Name Service</p>
 							<p className="subtitle">Highlander API on the blockchain!</p>
 						</div>
+						<div className='right'>
+							<img alt="Network logo" className="logo" src={network.includes("Polygon") ? polygonLogo : ethLogo} />
+							{currentAccount ? <p> Wallet: {currentAccount.slice(0, 6)}...{currentAccount.slice(-4)} </p> : <p> Not connected </p>}
+						</div>
 					</header>
 				</div>
 
@@ -156,7 +187,7 @@ const App = () => {
 						href={TWITTER_LINK}
 						target="_blank"
 						rel="noreferrer"
-					>{`built with @${TWITTER_HANDLE}`}</a>
+					>{`built by @${TWITTER_HANDLE}`}</a>
 				</div>
 			</div>
 		</div>
