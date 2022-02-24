@@ -156,6 +156,12 @@ const App = () => {
 		setLoading(false);
 	}
 
+	const cancelUpdateDomain = async () => {
+		setRecord('');
+		setDomain('');
+		setEditing(false);
+	}
+
 	const connectWallet = async () => {
 		try {
 			const { ethereum } = window;
@@ -283,12 +289,12 @@ const App = () => {
 					onChange={e => setRecord(e.target.value)} />
 				{editing ? (
 					<div className='button-container'>
-					// This will call the updateDomain function we just made
+						{ /* This will call the updateDomain function we just made */}
 						<button className='cta-button mint-button' disabled={loading} onClick={updateDomain}>
 							Set record
 						</button>
-							// This will let us get out of editing mode by setting editing to false
-						<button className='cta-button mint-button' onClick={() => { setEditing(false) }}>
+						{ /*} This will let us get out of editing mode by setting editing to false */}
+						<button className='cta-button mint-button' onClick={cancelUpdateDomain}>
 							Cancel
 						</button>
 					</div>
