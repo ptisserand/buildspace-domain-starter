@@ -14,7 +14,7 @@ const TWITTER_HANDLE = 'ptisserand';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const tld = ".foobar";
-const CONTRACT_ADDRESS = "0x8dC2B34A1d54d699e62B7e0FEA86d9694c4557B9";
+const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
 
 const App = () => {
 
